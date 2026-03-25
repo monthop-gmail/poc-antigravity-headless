@@ -1,0 +1,21 @@
+services:
+  antigravity:
+    build: .
+    container_name: antigravity-headless
+    ports:
+      - "6080:6080"   # noVNC - open http://localhost:6080 in browser
+      - "5900:5900"   # VNC - for native VNC clients (optional)
+    environment:
+      - DISPLAY_WIDTH=1920
+      - DISPLAY_HEIGHT=1080
+      - VNC_PASSWORD=antigravity
+    volumes:
+      - ./data/config:/root/.config/antigravity    # Antigravity settings & login
+      - ./data/workspace:/root/workspace           # Project files
+    shm_size: '512m'   # Needed for Chromium-based apps
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "netstat -tln | grep -q 6080 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
