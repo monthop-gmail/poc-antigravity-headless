@@ -1,27 +1,36 @@
 ---
 name: Antigravity Headless Docker Project
-description: Building a safe headless setup for Google Antigravity IDE using Docker + noVNC, avoiding third-party proxy tools
+description: Headless Antigravity IDE via Docker + noVNC — working, signed in, exploring LINE Bot integration
 type: project
 ---
 
 ## Project: Antigravity Headless via Docker + noVNC
 
-Goal: Run Google Antigravity GUI inside a Docker container, accessible via browser (noVNC), instead of using third-party proxy tools like lbjlaq/antigravity-manager.
+Goal: Run Google Antigravity GUI inside a Docker container, accessible via browser (noVNC).
 
-**Why:** User tried Gemini CLI but found it lacking. Wanted headless Antigravity but lbjlaq/antigravity-manager has security concerns (version spoofing, TLS fingerprint emulation, uses Google internal v1internal API, risk of ToS violation/account ban). Building our own safe alternative that runs the real Antigravity GUI.
+**Why:** User wants to use Antigravity AI (Gemini) for free via OAuth, without third-party proxy tools.
 
-**How to apply:** Always use official Google sources. No spoofing, no internal APIs, no third-party wrappers.
+**How to apply:** Always use official Google sources. No spoofing, no internal APIs.
 
-## Architecture Decision
-- Chose **Option A** (VNC/noVNC) over Option B (Gemini API direct) and Option C (official API proxy)
-- Stack: Debian bookworm-slim + Xvfb + x11vnc + Fluxbox + noVNC + supervisord
-- Antigravity installed from **official APT repo** (user verified the correct repo commands)
-- Access via browser at port 6080 (noVNC), optional VNC client at port 5900
+## Architecture
+- Stack: Debian bookworm-slim + Xvfb + x11vnc + Fluxbox + noVNC + Chromium + supervisord
+- Antigravity installed from official APT repo
+- Access: noVNC at port 6080, VNC at port 5900
+- Repo: https://github.com/monthop-gmail/poc-antigravity-headless (private, renamed)
 
 ## Current State (2026-03-25)
-- Initial commit pushed to GitHub: https://github.com/monthop-gmail/test-antigravity-headless (private)
-- NOT yet built/tested — user's local network is unstable, will continue on server
-- Next step: `docker compose up -d --build` on the server and test
+- **Working** — built, tested, Antigravity signed in with Google, AI usable via noVNC
+- Fixes applied: noVNC path (websockify), dbus, --user-data-dir, Chromium for OAuth, Fluxbox toolbar hidden, autorestart=false
+
+## Explored but Blocked
+- `antigravity serve-web` / `antigravity tunnel` — need `antigravity-tunnel` binary which is **proprietary and missing from APT package**, no download available
+- Language server CLI (`-cli -agent_mode`) — exists but **OAuth token sync fails** outside GUI context
+- opencode-antigravity-auth (NoeFabris) — works but **violates Google ToS, risk of account ban**
+
+## Next Steps (on hold)
+- User wants to use Antigravity AI from **LINE Bot** — no safe programmatic API found yet
+- Options considered: Gemini API Free Tier, Ollama self-host, OpenRouter, GUI automation via xdotool
+- User is thinking of new ideas
 
 ## Official Antigravity APT Repo (user-verified)
 ```
