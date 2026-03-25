@@ -8,4 +8,5 @@ exec antigravity \
     --disable-gpu \
     --disable-dev-shm-usage \
     --ozone-platform=x11 \
+    --user-data-dir=/root/.config/antigravity \
     2>&1

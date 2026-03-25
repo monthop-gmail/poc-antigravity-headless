@@ -19,6 +19,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgtk-3-0 libnotify4 libnss3 libxss1 libsecret-1-0 \
     libgbm1 libasound2 libdrm2 libatk-bridge2.0-0 \
     fonts-noto-cjk fonts-noto-color-emoji \
+    # Browser for OAuth flow
+    chromium \
     # Utilities
     net-tools dbus dbus-x11 \
     && rm -rf /var/lib/apt/lists/*
@@ -40,6 +42,14 @@ RUN ln -sf /usr/share/novnc/vnc_lite.html /usr/share/novnc/index.html
 # Setup VNC password
 RUN mkdir -p /root/.vnc && \
     x11vnc -storepasswd "${VNC_PASSWORD}" /root/.vnc/passwd
+
+# Fix Chromium to run as root (needs --no-sandbox)
+RUN sed -i 's|Exec=/usr/bin/chromium|Exec=/usr/bin/chromium --no-sandbox|g' /usr/share/applications/chromium.desktop
+
+# Fluxbox config: hide toolbar, maximize Antigravity
+RUN mkdir -p /root/.fluxbox && \
+    echo 'session.screen0.toolbar.visible: false' > /root/.fluxbox/init && \
+    echo '[startup] {/opt/scripts/start-antigravity.sh &}' > /root/.fluxbox/startup
 
 # Copy configs
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
