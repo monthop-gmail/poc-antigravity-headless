@@ -1,0 +1,3 @@
+- [Antigravity Headless Project](project_antigravity_headless.md) — Docker+noVNC setup, architecture decisions, current state, next steps
+- [User Profile](user_profile.md) — Thai speaker, security-conscious, prefers official sources, works across machines
+- [Always Verify Official Sources](feedback_official_sources.md) — User corrected APT repo to official; always verify before writing install steps
